@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>世界史テスト対策</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
+<style>
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  body{margin:0;padding:0;background:#0f172a;}
+  button{-webkit-appearance:none;appearance:none;}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState } = React;
+
+const ALL_QUESTIONS = [
+  { id:1, topic:"古代オリエント", type:"qa", q:"「エジプトはナイルの賜物」と言ったギリシアの歴史家は？", a:"ヘロドトス" },
+  { id:2, topic:"古代オリエント", type:"choice", q:"エジプト文明が成立した川は？", choices:["ユーフラテス川","ナイル川","インダス川","黄河"], a:"ナイル川" },
+  { id:3, topic:"古代オリエント", type:"qa", q:"前3000年ごろエジプトで統一国家成立の元となった集落単位を何というか？", a:"ノモス" },
+  { id:4, topic:"古代オリエント", type:"qa", q:"エジプトの王の称号は？", a:"ファラオ" },
+  { id:5, topic:"古代オリエント", type:"choice", q:"ファラオはどの神の化身とされたか？", choices:["オシリス","イシス","ラー（太陽神）","アヌビス"], a:"ラー（太陽神）" },
+  { id:6, topic:"古代オリエント", type:"qa", q:"エジプトで使われた神聖文字を何というか？", a:"ヒエログリフ" },
+  { id:7, topic:"古代オリエント", type:"choice", q:"ヒエログリフの解読が進むきっかけとなった発見物は？", choices:["パピルス","ロゼッタストーン","死者の書","カルナック神殿"], a:"ロゼッタストーン" },
+  { id:8, topic:"古代オリエント", type:"qa", q:"ロゼッタストーンを発見したのは誰か？", a:"ナポレオン" },
+  { id:9, topic:"古代オリエント", type:"choice", q:"エジプトで使われた暦と数の進法は？", choices:["太陰暦・六十進法","太陽暦・十進法","太陽暦・六十進法","太陰暦・十進法"], a:"太陽暦・十進法" },
+  { id:10, topic:"古代オリエント", type:"qa", q:"エジプト王の墓として建設された建造物は？", a:"ピラミッド" },
+  { id:11, topic:"古代オリエント", type:"qa", q:"ピラミッドに副葬された書物で、生前の善行を記すものは？", a:"死者の書" },
+  { id:12, topic:"古代オリエント", type:"qa", q:"メソポタミア文明が成立した二つの川は？", a:"ユーフラテス川とチグリス川" },
+  { id:13, topic:"古代オリエント", type:"choice", q:"メソポタミアで使われた文字は？", choices:["ヒエログリフ","アルファベット","くさび形文字","インダス文字"], a:"くさび形文字" },
+  { id:14, topic:"古代オリエント", type:"qa", q:"メソポタミアで前3000年ごろ建設された神殿（聖塔）は？", a:"ジッグラト" },
+  { id:15, topic:"古代オリエント", type:"choice", q:"「目には目を、歯には歯を」で知られるメソポタミアの法典は？", choices:["モーセ律法","ドラコンの法","ハンムラビ法典","十二表法"], a:"ハンムラビ法典" },
+  { id:16, topic:"古代オリエント", type:"qa", q:"メソポタミアで使われた暦は？", a:"太陰暦（六十進法）" },
+  { id:17, topic:"古代オリエント", type:"qa", q:"現存する最古の文学作品は何か？", a:"ギルガメッシュ叙事詩" },
+  { id:18, topic:"シリア・パレスティナ", type:"qa", q:"シリア・パレスティナ地方はどの文明とどの文明を結ぶ通路として発展したか？", a:"エジプトとメソポタミア" },
+  { id:19, topic:"シリア・パレスティナ", type:"choice", q:"アラム人が拠点とした内陸の中継貿易の中心都市は？", choices:["エルサレム","カルタゴ","ダマスクス","バビロン"], a:"ダマスクス" },
+  { id:20, topic:"シリア・パレスティナ", type:"qa", q:"アラム語はどのような役割を担ったか？", a:"国際商業語として広まった" },
+  { id:21, topic:"シリア・パレスティナ", type:"choice", q:"地中海貿易を独占した民族は？", choices:["アラム人","ヘブライ人","フェニキア人","ペルシア人"], a:"フェニキア人" },
+  { id:22, topic:"シリア・パレスティナ", type:"qa", q:"フェニキア文字はのちに何に発展したか？", a:"アルファベット（ヨーロッパの文字の元）" },
+  { id:23, topic:"シリア・パレスティナ", type:"qa", q:"ヘブライ人の自称は何か？", a:"イスラエル人" },
+  { id:24, topic:"シリア・パレスティナ", type:"choice", q:"ヘブライ人がエジプトで従事させられた労働は？", choices:["農業","鉱山採掘","ピラミッド建設","絹織物生産"], a:"ピラミッド建設" },
+  { id:25, topic:"シリア・パレスティナ", type:"qa", q:"ヘブライ人がエジプトを脱出した出来事を何というか（年代も）？", a:"出エジプト（前1280年）" },
+  { id:26, topic:"シリア・パレスティナ", type:"qa", q:"モーセが前1280年ごろシナイ山で神と結んだ契約を何というか？", a:"十戒" },
+  { id:27, topic:"シリア・パレスティナ", type:"choice", q:"ヘブライ人がパレスティナに定住した際に「神と約束の地」と呼ばれた場所は？", choices:["バビロン","ダマスクス","カナン（シオン）","エジプト"], a:"カナン（シオン）" },
+  { id:28, topic:"ヘブライ・ユダヤ教", type:"qa", q:"ヘブライ王国が成立したのはいつごろか？", a:"前1000年頃" },
+  { id:29, topic:"ヘブライ・ユダヤ教", type:"choice", q:"ヘブライ王国の初代国王は？", choices:["ダビデ","サウル","ソロモン","モーセ"], a:"サウル" },
+  { id:30, topic:"ヘブライ・ユダヤ教", type:"qa", q:"エルサレムを建設したヘブライ王国2代国王は？", a:"ダビデ" },
+  { id:31, topic:"ヘブライ・ユダヤ教", type:"qa", q:"エルサレムにヤハウェの神殿（神の箱）を建設した3代国王は？", a:"ソロモン" },
+  { id:32, topic:"ヘブライ・ユダヤ教", type:"choice", q:"ソロモン王の死後、ヘブライ王国はどう分裂したか？", choices:["東西に分裂","北のイスラエル王国と南のユダ王国","三国に分裂","内乱で消滅"], a:"北のイスラエル王国と南のユダ王国" },
+  { id:33, topic:"ヘブライ・ユダヤ教", type:"qa", q:"ユダヤ人が世界各地に離散することを何というか？", a:"ディアスポラ" },
+  { id:34, topic:"ヘブライ・ユダヤ教", type:"choice", q:"ヘブライ王国を支配した大国の順番は？", choices:["ペルシャ→新バビロニア→ローマ","新バビロニア→アケメネス朝ペルシャ→アレクサンドロス→ローマ","ローマ→ペルシャ→アレクサンドロス","アレクサンドロス→ローマ→ペルシャ"], a:"新バビロニア→アケメネス朝ペルシャ→アレクサンドロス→ローマ" },
+  { id:35, topic:"ヘブライ・ユダヤ教", type:"qa", q:"ユダヤ教が確立した時期はいつごろか？", a:"前6世紀ごろ" },
+  { id:36, topic:"ヘブライ・ユダヤ教", type:"qa", q:"ユダヤ教の唯一神は何か？", a:"ヤハウェ" },
+  { id:37, topic:"ヘブライ・ユダヤ教", type:"qa", q:"ユダヤ教の聖地はどこか？", a:"エルサレム" },
+  { id:38, topic:"ヘブライ・ユダヤ教", type:"qa", q:"ユダヤ教の経典は何か？", a:"旧約聖書（モーセの十戒を含む）" },
+  { id:39, topic:"ヘブライ・ユダヤ教", type:"choice", q:"ユダヤ教の特徴として正しいのは？", choices:["普遍宗教で誰でも救われる","選民思想・排他的・罪に不寛容","輪廻転生を信じる","多神教である"], a:"選民思想・排他的・罪に不寛容" },
+  { id:40, topic:"ヘブライ・ユダヤ教", type:"qa", q:"ユダヤ民族が危機の時に登場するとされる救世主を何というか？", a:"メシア" },
+  { id:41, topic:"ヘブライ・ユダヤ教", type:"choice", q:"ローマ帝国の支配下でイエスが登場した際、議論となったことは？", choices:["ローマ皇帝かどうか","メシア（救世主）かどうか","ユダヤ教の大祭司かどうか","預言者かどうか"], a:"メシア（救世主）かどうか" },
+  { id:42, topic:"ギリシア・ポリス", type:"choice", q:"ギリシアで統一国家が形成されなかった理由は？", choices:["人口が少なすぎた","雨が少なく山がちで農耕に不向きなため","ペルシアに支配されたため","言語が統一されていなかった"], a:"雨が少なく山がちで農耕に不向きなため" },
+  { id:43, topic:"ギリシア・ポリス", type:"qa", q:"ギリシアが古来から交易した国・民族は？", a:"フェニキア・エジプト" },
+  { id:44, topic:"ギリシア・ポリス", type:"choice", q:"紀元前8世紀ごろ地中海沿岸に成立した都市国家を何というか？", choices:["ノモス","ポリス","プロヴィンス","サトラップ"], a:"ポリス" },
+  { id:45, topic:"ギリシア・ポリス", type:"qa", q:"ポリスの城山（軍事拠点）を何というか？", a:"アクロポリス" },
+  { id:46, topic:"ギリシア・ポリス", type:"qa", q:"ポリスの広場（集会・裁判の場）を何というか？", a:"アゴラ" },
+  { id:47, topic:"ギリシア・ポリス", type:"choice", q:"ポリス同士が対立しながらも同一民族意識が生まれた理由は？", choices:["同じ王がいたから","共通の言語・宗教があったから","地理的に孤立していたから","ペルシアと戦ったから"], a:"共通の言語・宗教があったから" },
+  { id:48, topic:"ギリシア・ポリス", type:"qa", q:"ギリシア人はどの神々を信仰していたか？", a:"オリンポス12神" },
+  { id:49, topic:"ギリシア・ポリス", type:"choice", q:"ギリシア人は自分たちを何と呼んだか？", choices:["バルバロイ","ヘレネス","ドーリア人","ポリス人"], a:"ヘレネス" },
+  { id:50, topic:"ギリシア・ポリス", type:"qa", q:"ギリシア人は異民族を何と呼んだか？", a:"バルバロイ" },
+  { id:51, topic:"ギリシア・ポリス", type:"qa", q:"オリンピアの祭典（オリンピックの起源）は何年に1度か？", a:"4年に1度" },
+  { id:52, topic:"ギリシア・ポリス", type:"choice", q:"スパルタの特徴として正しいのは？", choices:["イオニア人・商業で発展","ドーリア人・軍国主義・食糧自給可能","アテネと同じ民族","海軍が強く海上貿易が盛ん"], a:"ドーリア人・軍国主義・食糧自給可能" },
+  { id:53, topic:"ギリシア・ポリス", type:"qa", q:"スパルタはどの地方にあったか？", a:"ラコニア地方" },
+  { id:54, topic:"ギリシア・ポリス", type:"choice", q:"アテネの特徴として正しいのは？", choices:["ドーリア人・農業国","イオニア人・商業で発展・ラウリオン銀山","軍国主義・鎖国主義","食糧自給が可能"], a:"イオニア人・商業で発展・ラウリオン銀山" },
+  { id:55, topic:"ギリシア・ポリス", type:"qa", q:"アテネが貨幣鋳造技術を持つ元となった銀山は？", a:"ラウリオン銀山" },
+  { id:56, topic:"インド文明", type:"qa", q:"インダス文明はいつごろ成立したか？", a:"前2600年ごろ" },
+  { id:57, topic:"インド文明", type:"choice", q:"インダス文明を担ったのはどの民族か？", choices:["アーリヤ人","ドラヴィダ人","セム人","インド＝ヨーロッパ人"], a:"ドラヴィダ人" },
+  { id:58, topic:"インド文明", type:"qa", q:"インダス下流（シンド地方）の都市遺跡は？（「死の丘」の意味）", a:"モエンジョ＝ダロ" },
+  { id:59, topic:"インド文明", type:"qa", q:"インダス上流（パンジャーブ地方）の都市遺跡は？", a:"ハラッパー" },
+  { id:60, topic:"インド文明", type:"choice", q:"インダス文明の特徴として誤っているのは？", choices:["印章の利用","インダス文字（未解読）","沐浴の習慣","文字はすでに解読済み"], a:"文字はすでに解読済み" },
+  { id:61, topic:"インド文明", type:"qa", q:"インダス文明が衰退した時期と理由は？", a:"前1800年ごろ（原因不明）" },
+  { id:62, topic:"インド文明", type:"choice", q:"前1500年ごろインドに侵入した民族は？", choices:["ドラヴィダ人","フェニキア人","アーリヤ人（インド＝ヨーロッパ系）","モンゴル人"], a:"アーリヤ人（インド＝ヨーロッパ系）" },
+  { id:63, topic:"インド文明", type:"qa", q:"アーリヤ人が神聖視した動物は何か？", a:"牛" },
+  { id:64, topic:"インド文明", type:"qa", q:"アーリヤ人の祭式の知識をまとめた文書は？最古のものは？", a:"ヴェーダ。最古はリグヴェーダ" },
+  { id:65, topic:"インド文明", type:"choice", q:"アーリヤ人が作ったバラモンを頂点とする身分制度は？", choices:["カースト制度","ヴァルナ制","ジャーティ制","バラモン制"], a:"ヴァルナ制" },
+  { id:66, topic:"インド文明", type:"choice", q:"ヴァルナ制の正しい順番（上から）は？", choices:["クシャトリア→バラモン→ヴァイシャ→シュードラ","バラモン→クシャトリア→ヴァイシャ→シュードラ","バラモン→ヴァイシャ→クシャトリア→シュードラ","シュードラ→ヴァイシャ→クシャトリア→バラモン"], a:"バラモン→クシャトリア→ヴァイシャ→シュードラ" },
+  { id:67, topic:"インド文明", type:"qa", q:"ヴァルナ制にジャーティが結びつき生まれたのちの制度は？", a:"カースト制度" },
+  { id:68, topic:"インド文明", type:"qa", q:"バラモン教への批判から仏教が誕生したのはいつか？", a:"前6世紀" },
+  { id:69, topic:"仏教・ヒンドゥー教", type:"qa", q:"仏教の開祖（個人名）は誰か？", a:"ガウタマ＝シッダールタ" },
+  { id:70, topic:"仏教・ヒンドゥー教", type:"choice", q:"ガウタマ＝シッダールタはどの国の何族の王子か？", choices:["コーサラ国のバラモン族","マガダ国の釈迦族","クシャーナ朝の王族","グプタ朝のヴァイシャ族"], a:"マガダ国の釈迦族" },
+  { id:71, topic:"仏教・ヒンドゥー教", type:"qa", q:"悟りをひらいたガウタマ＝シッダールタの呼び名は？", a:"仏陀（ブッダ）" },
+  { id:72, topic:"仏教・ヒンドゥー教", type:"choice", q:"仏教の「一切皆苦」とはどういう意味か？", choices:["すべての人間は平等","人生には苦しみがある","悟りを開けば解脱できる","輪廻転生は避けられない"], a:"人生には苦しみがある" },
+  { id:73, topic:"仏教・ヒンドゥー教", type:"qa", q:"仏教で「四苦」とは何か？", a:"生・老・病・死" },
+  { id:74, topic:"仏教・ヒンドゥー教", type:"choice", q:"仏教の「解脱」とは何か？", choices:["神に選ばれること","輪廻転生の輪から抜け出すこと","バラモン教を否定すること","カーストから逃れること"], a:"輪廻転生の輪から抜け出すこと" },
+  { id:75, topic:"仏教・ヒンドゥー教", type:"qa", q:"マウリア朝で仏教を保護した王は？（何代目か含む）", a:"3代 アショーカ王" },
+  { id:76, topic:"仏教・ヒンドゥー教", type:"choice", q:"クシャーナ朝（1〜3世紀）で仏教を保護した王は？", choices:["アショーカ王","アクバル帝","カニシカ王（3代）","チャンドラグプタ王"], a:"カニシカ王（3代）" },
+  { id:77, topic:"仏教・ヒンドゥー教", type:"qa", q:"グプタ朝（4〜6世紀）で成立した宗教は何か？", a:"ヒンドゥー教（バラモン教＋民間信仰）" },
+  { id:78, topic:"仏教・ヒンドゥー教", type:"choice", q:"グプタ朝以降に仏教が衰退した理由は？", choices:["キリスト教の流入","ヒンドゥー教のバクティ運動など他宗教への攻撃","イスラム教の普及","アショーカ王の弾圧"], a:"ヒンドゥー教のバクティ運動など他宗教への攻撃" },
+  { id:79, topic:"仏教・ヒンドゥー教", type:"qa", q:"7世紀インドを訪問した唐の僧（三蔵法師）は誰か？", a:"玄奘（げんじょう）" },
+  { id:80, topic:"仏教・ヒンドゥー教", type:"qa", q:"玄奘の著書は？また、何の元ネタになったか？", a:"大唐西域記。西遊記の元ネタ" },
+  { id:81, topic:"仏教・ヒンドゥー教", type:"choice", q:"ヒンドゥー教の「創造神」は？", choices:["シヴァ","ヴィシュヌ","ブラフマー","ガネーシャ"], a:"ブラフマー" },
+  { id:82, topic:"仏教・ヒンドゥー教", type:"qa", q:"ヒンドゥー教の「破壊と再生」の神は？息子は？", a:"シヴァ。息子はガネーシャ" },
+  { id:83, topic:"仏教・ヒンドゥー教", type:"choice", q:"ヒンドゥー教の「宇宙維持」の神は？", choices:["シヴァ","ブラフマー","ヴィシュヌ","インドラ"], a:"ヴィシュヌ" },
+  { id:84, topic:"仏教・ヒンドゥー教", type:"qa", q:"10世紀以降インドで続くようになった王朝の宗教は？", a:"イスラム教（イスラム王朝）" },
+  { id:85, topic:"ムガル帝国", type:"qa", q:"ムガル帝国の存続期間は？", a:"1526〜1858年" },
+  { id:86, topic:"ムガル帝国", type:"choice", q:"ムガル帝国の創始者は？", choices:["アクバル","フマーユーン","バーブル","シャー＝ジャハーン"], a:"バーブル" },
+  { id:87, topic:"ムガル帝国", type:"qa", q:"バーブルは誰の末えいを自称したか？", a:"チンギス＝ハンの末えい" },
+  { id:88, topic:"ムガル帝国", type:"choice", q:"ムガル帝国3代皇帝アクバルが行った政策は？", choices:["ヒンドゥー教徒の弾圧","イスラム教徒とヒンドゥー教徒の融和","仏教の保護","キリスト教の導入"], a:"イスラム教徒とヒンドゥー教徒の融和" },
+  { id:89, topic:"ムガル帝国", type:"qa", q:"アクバルがヒンドゥー教徒との融和のためにラージプート族と行ったことは？", a:"婚姻（結婚）" },
+  { id:90, topic:"ムガル帝国", type:"qa", q:"タージ＝マハルは誰が誰のために建てた墓か？", a:"5代皇帝シャー＝ジャハーンが妻ムムターズ＝マハルのために建てた" },
+  { id:91, topic:"ムガル帝国", type:"choice", q:"ムガル帝国時代にヨーロッパで大流行した綿布は？", choices:["シルク","キャラコ","リネン","ウール"], a:"キャラコ" },
+  { id:92, topic:"ムガル帝国", type:"qa", q:"ムガル帝国6代皇帝で、ヒンドゥー教徒を弾圧した人物は？", a:"アウラングゼーブ" },
+  { id:93, topic:"ムガル帝国", type:"choice", q:"アウラングゼーブの政策として正しいのは？", choices:["ヒンドゥー教との融和","ヒンドゥー教徒への弾圧・寺院破壊","仏教の保護","キリスト教の解禁"], a:"ヒンドゥー教徒への弾圧・寺院破壊" },
+  { id:94, topic:"モンゴル・元", type:"qa", q:"モンゴル帝国が出現したのは何世紀か？", a:"13世紀" },
+  { id:95, topic:"モンゴル・元", type:"qa", q:"チンギス＝ハンの個人名は？", a:"テムジン" },
+  { id:96, topic:"モンゴル・元", type:"choice", q:"モンゴルで君主ハンを選出する集会を何というか？", choices:["ジャムチ","クリルタイ","オルドス","カガン"], a:"クリルタイ" },
+  { id:97, topic:"モンゴル・元", type:"qa", q:"モンゴル帝国が分裂した際の形は？", a:"4ハン国と元（中国）" },
+  { id:98, topic:"モンゴル・元", type:"qa", q:"元の建国者は誰か？", a:"フビライ＝ハン" },
+  { id:99, topic:"モンゴル・元", type:"choice", q:"元が整備した交通・通信制度（駅伝制）を何というか？", choices:["シルクロード","ジャムチ","冊封体制","朝貢路"], a:"ジャムチ" },
+  { id:100, topic:"モンゴル・元", type:"qa", q:"元が旅人に発行した旅行証明書は何か？", a:"牌符（パイザ）" },
+  { id:101, topic:"モンゴル・元", type:"choice", q:"元を訪問したイタリア商人と著書は？", choices:["コロンブス・インド誌","マルコ＝ポーロ・世界の記録（東方見聞録）","ヴァスコ＝ダ＝ガマ・航海記","バスコ・東方記"], a:"マルコ＝ポーロ・世界の記録（東方見聞録）" },
+  { id:102, topic:"モンゴル・元", type:"qa", q:"元が滅亡したのはいつか？", a:"1351年" },
+  { id:103, topic:"モンゴル・元", type:"choice", q:"元が財政難に陥った一因は？", choices:["海禁政策","チベット仏教にはまりすぎた","日本遠征の失敗","ジャムチの廃止"], a:"チベット仏教にはまりすぎた" },
+  { id:104, topic:"モンゴル・元", type:"qa", q:"モンゴル（元）が日本に攻めてきた事件を総称して何というか？", a:"元寇" },
+  { id:105, topic:"モンゴル・元", type:"choice", q:"元寇の1274年の戦いを何というか？", choices:["弘安の役","文永の役","応仁の乱","承久の乱"], a:"文永の役" },
+  { id:106, topic:"モンゴル・元", type:"qa", q:"元寇の1281年の戦いを何というか？", a:"弘安の役" },
+  { id:107, topic:"明", type:"qa", q:"明はどの民族が建てた王朝か？（元への対比で）", a:"漢民族の復活王朝" },
+  { id:108, topic:"明", type:"choice", q:"明が民間人の海上交易を禁じた政策を何というか？", choices:["冊封体制","朝貢貿易","海禁政策","鎖国政策"], a:"海禁政策" },
+  { id:109, topic:"明", type:"qa", q:"明の海禁政策のもとで鄭和が行ったのは何か？", a:"南海遠征（1408〜33）" },
+  { id:110, topic:"明", type:"choice", q:"冊封体制とは何か？", choices:["中国が他国と対等に外交する仕組み","中国皇帝が周辺国君主に官位を与え主従関係を結ぶ仕組み","貿易港を開放する制度","属国から税を徴収する制度"], a:"中国皇帝が周辺国君主に官位を与え主従関係を結ぶ仕組み" },
+  { id:111, topic:"明", type:"qa", q:"冊封国に認められる貿易を何というか？", a:"朝貢貿易" },
+  { id:112, topic:"明", type:"choice", q:"朝貢貿易で中国側が負担したものは？", choices:["関税","交通費・滞在費","軍事費","通訳費"], a:"交通費・滞在費" },
+  { id:113, topic:"明", type:"qa", q:"冊封体制において冊封国の立場は？", a:"弟分・臣下の立場（中国が兄・上）" },
+  { id:114, topic:"明", type:"choice", q:"明は15世紀以降どうなったか？", choices:["最盛期を迎えた","清に征服された","弱体化した","海外進出を拡大した"], a:"弱体化した" },
+  { id:115, topic:"日本史（鎌倉〜戦国）", type:"qa", q:"鎌倉時代はいつからいつまでか？", a:"1185〜1333年" },
+  { id:116, topic:"日本史（鎌倉〜戦国）", type:"choice", q:"鎌倉時代はどんな政権か？", choices:["貴族政権","初の武家政権","天皇親政","摂関政治"], a:"初の武家政権" },
+  { id:117, topic:"日本史（鎌倉〜戦国）", type:"qa", q:"源氏が3代で断絶したあと行われた政治形態は？", a:"執権政治" },
+  { id:118, topic:"日本史（鎌倉〜戦国）", type:"choice", q:"元寇の時の執権は誰か？", choices:["北条政子","足利尊氏","北条時宗","源頼朝"], a:"北条時宗" },
+  { id:119, topic:"日本史（鎌倉〜戦国）", type:"qa", q:"元寇後に御家人が弱えた理由は？", a:"恩賞が得られなかったため" },
+  { id:120, topic:"日本史（鎌倉〜戦国）", type:"choice", q:"鎌倉幕府が滅亡したのはいつか？", choices:["1192年","1333年","1338年","1467年"], a:"1333年" },
+  { id:121, topic:"日本史（鎌倉〜戦国）", type:"qa", q:"鎌倉幕府滅亡後の天皇の新政と、崩壊までの期間は？", a:"後醍醐天皇の建武の新政。約2年で崩壊" },
+  { id:122, topic:"日本史（鎌倉〜戦国）", type:"qa", q:"室町時代はいつからいつまでか？", a:"1338〜1573年" },
+  { id:123, topic:"日本史（鎌倉〜戦国）", type:"choice", q:"室町幕府を開いた人物は？", choices:["足利義満","足利尊氏","後醍醐天皇","源頼朝"], a:"足利尊氏" },
+  { id:124, topic:"日本史（鎌倉〜戦国）", type:"qa", q:"南北朝を統一した人物と年は？", a:"足利義満。1392年" },
+  { id:125, topic:"日本史（鎌倉〜戦国）", type:"choice", q:"足利義満が行った明との貿易を何というか？", choices:["南蛮貿易","日宋貿易","日明貿易（勘合貿易）","朱印船貿易"], a:"日明貿易（勘合貿易）" },
+  { id:126, topic:"日本史（鎌倉〜戦国）", type:"qa", q:"応仁の乱はいつか？", a:"1467年" },
+  { id:127, topic:"日本史（鎌倉〜戦国）", type:"qa", q:"応仁の乱後の下剋上の時代を何というか？", a:"戦国時代" },
+  { id:128, topic:"日本史（鎌倉〜戦国）", type:"choice", q:"鉄砲が日本に伝来した年と場所は？", choices:["1543年・種子島","1549年・鹿児島","1543年・琉球","1549年・長崎"], a:"1543年・種子島" },
+  { id:129, topic:"日本史（鎌倉〜戦国）", type:"qa", q:"キリスト教を日本に伝えたイエズス会の宣教師は？（1549年）", a:"フランシスコ＝ザビエル" },
+  { id:130, topic:"日本史（鎌倉〜戦国）", type:"choice", q:"日明貿易で足利義満は明から何と認められたか？", choices:["日本国王","天皇","東夷の長","征夷大将軍"], a:"日本国王" },
+];
+
+const TOPICS = [...new Set(ALL_QUESTIONS.map(q => q.topic))];
+const TC = {
+  "古代オリエント":       { accent:"#f59e0b", light:"rgba(245,158,11,0.15)" },
+  "シリア・パレスティナ": { accent:"#ec4899", light:"rgba(236,72,153,0.15)" },
+  "ヘブライ・ユダヤ教":   { accent:"#7c3aed", light:"rgba(124,58,237,0.15)" },
+  "ギリシア・ポリス":     { accent:"#3b82f6", light:"rgba(59,130,246,0.15)" },
+  "インド文明":           { accent:"#10b981", light:"rgba(16,185,129,0.15)" },
+  "仏教・ヒンドゥー教":   { accent:"#14b8a6", light:"rgba(20,184,166,0.15)" },
+  "ムガル帝国":           { accent:"#f97316", light:"rgba(249,115,22,0.15)" },
+  "モンゴル・元":         { accent:"#ef4444", light:"rgba(239,68,68,0.15)" },
+  "明":                   { accent:"#22c55e", light:"rgba(34,197,94,0.15)" },
+  "日本史（鎌倉〜戦国）": { accent:"#a855f7", light:"rgba(168,85,247,0.15)" },
+};
+
+function shuffle(arr){ return [...arr].sort(()=>Math.random()-0.5); }
+
+function App(){
+  const [mode,setMode]=useState("home");
+  const [sel,setSel]=useState(new Set(TOPICS));
+  const [qs,setQs]=useState([]);
+  const [cur,setCur]=useState(0);
+  const [revealed,setRevealed]=useState(false);
+  const [picked,setPicked]=useState(null);
+  const [score,setScore]=useState(0);
+  const [results,setResults]=useState([]);
+  const S={fontFamily:"'Hiragino Kaku Gothic ProN','Noto Sans JP','Meiryo',sans-serif"};
+
+  function start(){
+    const f=shuffle(ALL_QUESTIONS.filter(q=>sel.has(q.topic)));
+    setQs(f);setCur(0);setScore(0);setResults([]);setRevealed(false);setPicked(null);setMode("quiz");
+  }
+  function toggleTopic(t){
+    setSel(p=>{const n=new Set(p);if(n.has(t)){if(n.size>1)n.delete(t);}else n.add(t);return n;});
+  }
+  function pickChoice(ch){
+    if(revealed)return;
+    setPicked(ch);setRevealed(true);
+    const ok=ch===qs[cur].a;
+    if(ok)setScore(s=>s+1);
+    setResults(r=>[...r,{...qs[cur],correct:ok,picked:ch}]);
+  }
+  function selfScore(ok){
+    if(ok)setScore(s=>s+1);
+    setResults(r=>[...r,{...qs[cur],correct:ok}]);
+    advance();
+  }
+  function advance(){
+    setRevealed(false);setPicked(null);
+    if(cur+1>=qs.length)setMode("result");else setCur(c=>c+1);
+  }
+
+  const q=qs[cur];
+  const c=q?(TC[q.topic]||TC["明"]):null;
+  const totalSel=ALL_QUESTIONS.filter(q=>sel.has(q.topic)).length;
+
+  if(mode==="home") return (
+    <div style={{...S,minHeight:"100vh",background:"#0f172a",padding:"24px 16px",boxSizing:"border-box"}}>
+      <div style={{maxWidth:480,margin:"0 auto"}}>
+        <div style={{textAlign:"center",marginBottom:28}}>
+          <div style={{fontSize:44,marginBottom:6}}>📜</div>
+          <h1 style={{color:"#f1f5f9",fontSize:22,fontWeight:900,margin:0,lineHeight:1.3}}>世界史テスト対策</h1>
+          <p style={{color:"#64748b",fontSize:13,margin:"6px 0 0"}}>全{ALL_QUESTIONS.length}問 ノートから完全網羅</p>
+        </div>
+        <div style={{background:"#1e293b",borderRadius:14,padding:18,marginBottom:16}}>
+          <p style={{color:"#94a3b8",fontSize:12,fontWeight:700,margin:"0 0 12px",letterSpacing:"0.05em"}}>▶ 出題範囲を選ぶ</p>
+          <div style={{display:"flex",flexWrap:"wrap",gap:8}}>
+            {TOPICS.map(t=>{
+              const tc=TC[t]||TC["明"];const on=sel.has(t);
+              const cnt=ALL_QUESTIONS.filter(q=>q.topic===t).length;
+              return <button key={t} onClick={()=>toggleTopic(t)} style={{
+                padding:"9px 13px",borderRadius:20,fontSize:12,fontWeight:700,cursor:"pointer",
+                border:"2px solid "+(on?tc.accent:"transparent"),
+                background:on?tc.light:"rgba(255,255,255,0.05)",
+                color:on?tc.accent:"#475569",transition:"all 0.15s"
+              }}>{t}({cnt})</button>;
+            })}
+          </div>
+          <p style={{color:"#475569",fontSize:11,margin:"10px 0 0"}}>選択中: {totalSel}問</p>
+        </div>
+        <button onClick={start} style={{
+          width:"100%",padding:"18px",borderRadius:14,fontSize:18,fontWeight:900,
+          background:"linear-gradient(90deg,#6366f1,#8b5cf6)",color:"#fff",
+          border:"none",cursor:"pointer",boxShadow:"0 8px 24px rgba(99,102,241,0.4)",letterSpacing:"0.05em"
+        }}>🚀 テスト開始！</button>
+        <div style={{marginTop:16,background:"#1e293b",borderRadius:12,padding:14}}>
+          <p style={{color:"#64748b",fontSize:11,margin:0,lineHeight:1.8}}>
+            💡 一問一答 → 「答えを見る」→ ⭕/❌で自己採点<br/>
+            💡 選択問題 → 4択をタップで即判定<br/>
+            💡 終了後に間違えた問題を一覧表示
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+
+  if(mode==="result"){
+    const pct=Math.round(score/qs.length*100);
+    const wrong=results.filter(r=>!r.correct);
+    return (
+      <div style={{...S,minHeight:"100vh",background:"#0f172a",padding:"24px 16px",boxSizing:"border-box"}}>
+        <div style={{maxWidth:480,margin:"0 auto"}}>
+          <div style={{background:"#1e293b",borderRadius:16,padding:24,textAlign:"center",marginBottom:16}}>
+            <div style={{fontSize:52}}>{pct>=80?"🏆":pct>=60?"💪":"📖"}</div>
+            <h2 style={{color:"#f1f5f9",margin:"8px 0 4px",fontSize:20}}>結果</h2>
+            <div style={{fontSize:48,fontWeight:900,color:pct>=80?"#4ade80":pct>=60?"#facc15":"#f87171"}}>
+              {score}<span style={{fontSize:20,color:"#475569"}}>/{qs.length}</span>
+            </div>
+            <div style={{color:"#94a3b8",fontSize:16}}>{pct}点</div>
+          </div>
+          {wrong.length>0&&(
+            <div style={{background:"#1e293b",borderRadius:14,padding:18,marginBottom:16}}>
+              <h3 style={{color:"#f87171",fontSize:14,margin:"0 0 14px"}}>❌ 間違えた問題（{wrong.length}問）</h3>
+              {wrong.map((r,i)=>{
+                const tc=TC[r.topic]||TC["明"];
+                return (
+                  <div key={i} style={{marginBottom:14,padding:14,borderRadius:10,background:"rgba(0,0,0,0.3)",borderLeft:`3px solid ${tc.accent}`}}>
+                    <div style={{color:tc.accent,fontSize:10,fontWeight:700,marginBottom:4}}>{r.topic}</div>
+                    <div style={{color:"#e2e8f0",fontSize:13,marginBottom:8,lineHeight:1.5}}>{r.q}</div>
+                    {r.picked&&<div style={{color:"#f87171",fontSize:12,marginBottom:2}}>選んだ答え: {r.picked}</div>}
+                    <div style={{color:"#4ade80",fontSize:13,fontWeight:700}}>正解: {r.a}</div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+          <div style={{display:"flex",gap:10}}>
+            <button onClick={start} style={{flex:1,padding:"16px",borderRadius:12,fontSize:15,fontWeight:700,background:"linear-gradient(90deg,#6366f1,#8b5cf6)",color:"#fff",border:"none",cursor:"pointer"}}>🔄 もう一度</button>
+            <button onClick={()=>setMode("home")} style={{flex:1,padding:"16px",borderRadius:12,fontSize:15,fontWeight:700,background:"rgba(255,255,255,0.07)",color:"#94a3b8",border:"1px solid rgba(255,255,255,0.1)",cursor:"pointer"}}>🏠 トップ</button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if(!q)return null;
+  const prog=(cur/qs.length)*100;
+  return (
+    <div style={{...S,minHeight:"100vh",background:"#0f172a",padding:"20px 16px",boxSizing:"border-box"}}>
+      <div style={{maxWidth:480,margin:"0 auto"}}>
+        <div style={{marginBottom:16}}>
+          <div style={{display:"flex",justifyContent:"space-between",marginBottom:6}}>
+            <span style={{color:"#94a3b8",fontSize:13}}>{cur+1} / {qs.length}問</span>
+            <span style={{color:"#4ade80",fontSize:13,fontWeight:700}}>✅ {score}問正解</span>
+          </div>
+          <div style={{height:6,background:"rgba(255,255,255,0.08)",borderRadius:10}}>
+            <div style={{height:"100%",borderRadius:10,background:"linear-gradient(90deg,#6366f1,#8b5cf6)",width:`${prog}%`,transition:"width 0.3s"}}/>
+          </div>
+        </div>
+        <div style={{marginBottom:12,display:"flex",gap:8,alignItems:"center"}}>
+          <span style={{background:c.accent,color:"#fff",padding:"4px 12px",borderRadius:20,fontSize:11,fontWeight:700}}>{q.topic}</span>
+          <span style={{color:"#475569",fontSize:11}}>{q.type==="qa"?"一問一答":"選択"}</span>
+        </div>
+        <div style={{background:"#1e293b",borderRadius:16,padding:22,marginBottom:16,borderLeft:`4px solid ${c.accent}`}}>
+          <p style={{color:"#f1f5f9",fontSize:17,lineHeight:1.8,margin:0,fontWeight:600}}>{q.q}</p>
+        </div>
+        {q.type==="choice"&&(
+          <div style={{display:"flex",flexDirection:"column",gap:10,marginBottom:16}}>
+            {q.choices.map((ch,i)=>{
+              let bg="rgba(255,255,255,0.05)",border="rgba(255,255,255,0.08)",col="#e2e8f0";
+              if(revealed){
+                if(ch===q.a){bg="rgba(74,222,128,0.15)";border="#4ade80";col="#4ade80";}
+                else if(ch===picked){bg="rgba(248,113,113,0.15)";border="#f87171";col="#f87171";}
+              }
+              return (
+                <button key={i} onClick={()=>pickChoice(ch)} style={{
+                  padding:"16px",borderRadius:12,textAlign:"left",
+                  background:bg,border:`2px solid ${border}`,color:col,
+                  fontSize:15,fontWeight:600,cursor:revealed?"default":"pointer",lineHeight:1.5
+                }}>
+                  <span style={{color:"#475569",marginRight:8}}>{"アイウエ"[i]}．</span>{ch}
+                </button>
+              );
+            })}
+            {revealed&&(
+              <button onClick={advance} style={{
+                marginTop:6,padding:"18px",borderRadius:12,fontSize:16,fontWeight:900,
+                background:"linear-gradient(90deg,#6366f1,#8b5cf6)",color:"#fff",border:"none",cursor:"pointer"
+              }}>{cur+1>=qs.length?"結果を見る 🏁":"次の問題 →"}</button>
+            )}
+          </div>
+        )}
+        {q.type==="qa"&&(
+          <div style={{marginBottom:16}}>
+            {!revealed?(
+              <button onClick={()=>setRevealed(true)} style={{
+                width:"100%",padding:"20px",borderRadius:12,fontSize:17,fontWeight:700,
+                background:c.light,border:`2px solid ${c.accent}`,color:c.accent,cursor:"pointer"
+              }}>💡 答えを見る</button>
+            ):(
+              <>
+                <div style={{background:"rgba(74,222,128,0.1)",borderRadius:14,padding:20,marginBottom:14,border:"2px solid #4ade80"}}>
+                  <div style={{color:"#4ade80",fontSize:12,fontWeight:700,marginBottom:8}}>✅ 正解</div>
+                  <div style={{color:"#f1f5f9",fontSize:18,fontWeight:900,lineHeight:1.6}}>{q.a}</div>
+                </div>
+                <div style={{display:"flex",gap:12}}>
+                  <button onClick={()=>selfScore(true)} style={{
+                    flex:1,padding:"20px 12px",borderRadius:12,fontSize:17,fontWeight:900,
+                    background:"rgba(74,222,128,0.15)",border:"2px solid #4ade80",color:"#4ade80",cursor:"pointer"
+                  }}>⭕<br/><span style={{fontSize:12}}>正解</span></button>
+                  <button onClick={()=>selfScore(false)} style={{
+                    flex:1,padding:"20px 12px",borderRadius:12,fontSize:17,fontWeight:900,
+                    background:"rgba(248,113,113,0.15)",border:"2px solid #f87171",color:"#f87171",cursor:"pointer"
+                  }}>❌<br/><span style={{fontSize:12}}>不正解</span></button>
+                </div>
+              </>
+            )}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
+</script>
+</body>
+</html>
